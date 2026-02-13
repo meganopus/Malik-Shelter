@@ -5,6 +5,7 @@ import { useAdoption } from '@/composables/useAdoption'
 import { useDialog } from '@/composables/useDialog'
 import AdoptionRequestTable from '@/components/staff/AdoptionRequestTable.vue'
 import ProfileReviewModal from '@/components/staff/ProfileReviewModal.vue'
+import FinalizeAdoptionModal from '@/components/staff/FinalizeAdoptionModal.vue'
 
 const { listAllRequests, updateRequestStatus, updateBookingStatus, getAdopterProfile } = useAdoption()
 const dialog = useDialog()
@@ -21,6 +22,9 @@ const filters = ref({
 
 const selectedProfile = ref(null)
 const isReviewModalOpen = ref(false)
+
+const isFinalizeModalOpen = ref(false)
+const selectedRequestId = ref<string | null>(null)
 
 const handleReviewProfile = async (adopterId: string) => {
   try {
@@ -56,30 +60,21 @@ const fetchRequests = async () => {
   }
 }
 
-const handleApprove = async (id: string) => {
-  const notes = window.prompt('Please enter visit notes and observation results (Mandatory):')
-  
-  if (notes === null) return // Cancelled prompt
-  if (!notes.trim()) {
-    dialog.error('Visit notes are required to finalize an adoption.')
-    return
-  }
+const handleApprove = (id: string) => {
+  selectedRequestId.value = id
+  isFinalizeModalOpen.value = true
+}
 
-  dialog.show({
-    title: 'Finalize Adoption?',
-    message: 'Confirming this will mark the pet as ADOPTED and auto-reject all other pending requests.',
-    type: 'info',
-    confirmText: 'Finalize Adoption 🐾',
-    onConfirm: async () => {
-      try {
-        await updateRequestStatus(id, 'APPROVED', notes)
-        dialog.success('Adoption finalized! Pet status updated to ADOPTED.')
-        await fetchRequests()
-      } catch (e: any) {
-        dialog.error(e.message)
-      }
-    }
-  })
+const onFinalizeConfirm = async (notes: string) => {
+  if (!selectedRequestId.value) return
+
+  try {
+    await updateRequestStatus(selectedRequestId.value, 'APPROVED', notes)
+    dialog.success('Adoption finalized! Pet status updated to ADOPTED.')
+    await fetchRequests()
+  } catch (e: any) {
+    dialog.error(e.message)
+  }
 }
 
 const handleReject = async (id: string) => {
@@ -128,14 +123,11 @@ onMounted(fetchRequests)
       <div class="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-soft border border-primary/10">
         <div class="relative flex-1 min-w-[200px]">
           <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
-          <input 
-            v-model="filters.adopter_name" 
-            type="text" 
-            placeholder="Search Adopter..." 
-            class="w-full pl-11 pr-4 py-2 rounded-xl focus:bg-primary/5 outline-none transition-colors border-none"
-          />
+          <input v-model="filters.adopter_name" type="text" placeholder="Search Adopter..."
+            class="w-full pl-11 pr-4 py-2 rounded-xl focus:bg-primary/5 outline-none transition-colors border-none" />
         </div>
-        <select v-model="filters.status" class="bg-primary/5 px-4 py-2 rounded-xl outline-none border-none font-bold text-muted">
+        <select v-model="filters.status"
+          class="bg-primary/5 px-4 py-2 rounded-xl outline-none border-none font-bold text-muted">
           <option value="">All Statuses</option>
           <option value="PENDING">Pending</option>
           <option value="APPROVED">Approved</option>
@@ -144,19 +136,12 @@ onMounted(fetchRequests)
       </div>
     </div>
 
-    <AdoptionRequestTable 
-      :requests="requests" 
-      :loading="loading" 
-      @approve="handleApprove"
-      @reject="handleReject"
-      @check-in="handleCheckIn"
-      @review-profile="handleReviewProfile"
-    />
+    <AdoptionRequestTable :requests="requests" :loading="loading" @approve="handleApprove" @reject="handleReject"
+      @check-in="handleCheckIn" @review-profile="handleReviewProfile" />
 
-    <ProfileReviewModal 
-      :show="isReviewModalOpen"
-      :profile="selectedProfile"
-      @close="isReviewModalOpen = false"
-    />
+    <ProfileReviewModal :show="isReviewModalOpen" :profile="selectedProfile" @close="isReviewModalOpen = false" />
+
+    <FinalizeAdoptionModal :show="isFinalizeModalOpen" :request-id="selectedRequestId"
+      @close="isFinalizeModalOpen = false" @confirm="onFinalizeConfirm" />
   </div>
 </template>

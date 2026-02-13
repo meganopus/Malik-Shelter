@@ -162,7 +162,19 @@ export class AdoptionRequestService {
           data: { status: 'ADOPTED' }
         });
 
-        // Auto-reject other pending requests for this animal
+        // Find all other pending requests for this animal to handle their bookings
+        const otherRequests = await tx.adoptionRequest.findMany({
+          where: {
+            animal_id: request.animal_id,
+            id: { not: requestId },
+            status: 'PENDING'
+          },
+          include: {
+            bookings: true
+          }
+        });
+
+        // Auto-reject other pending requests
         await tx.adoptionRequest.updateMany({
           where: {
             animal_id: request.animal_id,
@@ -171,6 +183,26 @@ export class AdoptionRequestService {
           },
           data: { status: 'REJECTED_AUTO' }
         });
+
+        // Cancel their bookings and release slot capacity
+        for (const otherReq of otherRequests) {
+          for (const booking of otherReq.bookings) {
+            if (booking.status === 'SCHEDULED') {
+              await tx.visitBooking.update({
+                where: { id: booking.id },
+                data: { status: 'CANCELLED' }
+              });
+
+              await tx.visitSlot.update({
+                where: { id: booking.visit_slot_id },
+                data: {
+                  current_bookings: { decrement: 1 },
+                  version: { increment: 1 }
+                }
+              });
+            }
+          }
+        }
       }
 
       return request;

@@ -39,7 +39,7 @@ const validate = () => {
   errors.phone = !form.phone ? 'Phone is required' : ''
   errors.address = !form.address ? 'Address is required' : ''
   errors.occupation = !form.occupation ? 'Occupation is required' : ''
-  
+
   if (errors.full_name || errors.phone || errors.address || errors.occupation) {
     valid = false
   }
@@ -63,59 +63,39 @@ const handleNext = () => {
     <div class="space-y-4">
       <div>
         <label class="block text-sm font-bold text-text-dark mb-1">Full Name</label>
-        <input 
-          v-model="form.full_name"
-          type="text"
-          placeholder="John Doe"
+        <input v-model="form.full_name" type="text" placeholder="Full Name"
           class="w-full px-4 py-2 rounded-btn border border-primary/20 focus:border-primary outline-none font-form transition-colors"
-          :class="{ 'border-red-400': errors.full_name }"
-        />
+          :class="{ 'border-red-400': errors.full_name }" />
         <p v-if="errors.full_name" class="text-red-400 text-xs mt-1">{{ errors.full_name }}</p>
       </div>
 
       <div>
         <label class="block text-sm font-bold text-text-dark mb-1">Phone Number</label>
-        <input 
-          v-model="form.phone"
-          type="tel"
-          placeholder="+1 (555) 000-0000"
+        <input v-model="form.phone" type="tel" placeholder="Phone Number"
           class="w-full px-4 py-2 rounded-btn border border-primary/20 focus:border-primary outline-none font-form transition-colors"
-          :class="{ 'border-red-400': errors.phone }"
-        />
+          :class="{ 'border-red-400': errors.phone }" />
         <p v-if="errors.phone" class="text-red-400 text-xs mt-1">{{ errors.phone }}</p>
       </div>
 
       <div>
         <label class="block text-sm font-bold text-text-dark mb-1">Physical Address</label>
-        <textarea 
-          v-model="form.address"
-          rows="3"
-          placeholder="123 Shelter Lane, Paws City, PC 12345"
+        <textarea v-model="form.address" rows="3" placeholder="Physical Address"
           class="w-full px-4 py-2 rounded-btn border border-primary/20 focus:border-primary outline-none font-form transition-colors resize-none"
-          :class="{ 'border-red-400': errors.address }"
-        ></textarea>
+          :class="{ 'border-red-400': errors.address }"></textarea>
         <p v-if="errors.address" class="text-red-400 text-xs mt-1">{{ errors.address }}</p>
       </div>
 
       <div>
         <label class="block text-sm font-bold text-text-dark mb-1">Occupation</label>
-        <input 
-          v-model="form.occupation"
-          type="text"
-          placeholder="Software Engineer"
+        <input v-model="form.occupation" type="text" placeholder="Software Engineer"
           class="w-full px-4 py-2 rounded-btn border border-primary/20 focus:border-primary outline-none font-form transition-colors"
-          :class="{ 'border-red-400': errors.occupation }"
-        />
+          :class="{ 'border-red-400': errors.occupation }" />
         <p v-if="errors.occupation" class="text-red-400 text-xs mt-1">{{ errors.occupation }}</p>
       </div>
     </div>
 
     <div class="pt-6 flex justify-end">
-      <button 
-        @click="handleNext" 
-        :disabled="loading"
-        class="btn-primary"
-      >
+      <button @click="handleNext" :disabled="loading" class="btn-primary">
         {{ loading ? 'Saving...' : 'Next: Housing & Environment' }}
       </button>
     </div>

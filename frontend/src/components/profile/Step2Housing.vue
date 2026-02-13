@@ -41,10 +41,10 @@ const validate = () => {
   errors.residence_type = !form.residence_type ? 'Residence type is required' : ''
   errors.ownership_status = !form.ownership_status ? 'Ownership status is required' : ''
   errors.outdoor_area = !form.outdoor_area ? 'Outdoor area info is required' : ''
-  
+
   const photoCount = props.initialData?.home_photos?.length || 0
   errors.photos = photoCount < 2 ? 'At least 2 photos are required for completion' : ''
-  
+
   if (errors.residence_type || errors.ownership_status || errors.outdoor_area) {
     valid = false
   }
@@ -82,12 +82,10 @@ const onFileChange = (e: Event) => {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label class="block text-sm font-bold text-text-dark mb-1">Residence Type</label>
-          <select 
-            v-model="form.residence_type"
+          <select v-model="form.residence_type"
             class="w-full px-4 py-2 rounded-btn border border-primary/20 focus:border-primary outline-none font-form bg-white transition-colors"
-            :class="{ 'border-red-400': errors.residence_type }"
-          >
-            <option value="" disabled>Select type</option>
+            :class="{ 'border-red-400': errors.residence_type }">
+            <option value="" disabled>Residence Type</option>
             <option value="House">House</option>
             <option value="Apartment">Apartment</option>
             <option value="Townhouse">Townhouse</option>
@@ -112,20 +110,20 @@ const onFileChange = (e: Event) => {
         </div>
       </div>
 
-      <div v-if="form.ownership_status === 'RENT'" class="bg-highlight/20 p-4 rounded-btn border border-highlight border-dashed">
+      <div v-if="form.ownership_status === 'RENT'"
+        class="bg-highlight/20 p-4 rounded-btn border border-highlight border-dashed">
         <p class="text-sm text-text-dark font-form">
-          <span class="font-bold">Note:</span> If you rent, we may require a landlord's permission letter during the visit request process.
+          <span class="font-bold">Note:</span> If you rent, we may require a landlord's permission letter during the
+          visit request process.
         </p>
       </div>
 
       <div>
         <label class="block text-sm font-bold text-text-dark mb-1">Outdoor Area</label>
-        <select 
-          v-model="form.outdoor_area"
+        <select v-model="form.outdoor_area"
           class="w-full px-4 py-2 rounded-btn border border-primary/20 focus:border-primary outline-none font-form bg-white transition-colors"
-          :class="{ 'border-red-400': errors.outdoor_area }"
-        >
-          <option value="" disabled>Select option</option>
+          :class="{ 'border-red-400': errors.outdoor_area }">
+          <option value="" disabled>Outdoor Area</option>
           <option value="Fenced Garden">Fenced Garden</option>
           <option value="Unfenced Garden">Unfenced Garden</option>
           <option value="Balcony">Balcony</option>
@@ -137,27 +135,28 @@ const onFileChange = (e: Event) => {
       <div>
         <label class="block text-sm font-bold text-text-dark mb-3">Residence Photos (Min 2 recommended)</label>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          <div 
-            v-for="photo in initialData?.home_photos" 
-            :key="photo.id"
-            class="relative aspect-square rounded-card overflow-hidden group shadow-soft"
-          >
+          <div v-for="photo in initialData?.home_photos" :key="photo.id"
+            class="relative aspect-square rounded-card overflow-hidden group shadow-soft">
             <img :src="'http://localhost:3000' + photo.photo_url" class="w-full h-full object-cover" />
-            <button 
-              @click="emit('delete-photo', photo.id)"
-              class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <button @click="emit('delete-photo', photo.id)"
+              class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
             </button>
           </div>
-          
-          <button 
-            @click="triggerFileUpload"
-            :disabled="loading"
-            class="aspect-square rounded-card border-2 border-dashed border-primary/30 flex flex-col items-center justify-center gap-2 hover:bg-primary/5 transition-colors group"
-          >
+
+          <button @click="triggerFileUpload" :disabled="loading"
+            class="aspect-square rounded-card border-2 border-dashed border-primary/30 flex flex-col items-center justify-center gap-2 hover:bg-primary/5 transition-colors group">
             <div class="bg-primary/10 rounded-full p-3 group-hover:bg-primary/20 transition-colors">
-              <svg v-if="!loading" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <svg v-if="!loading" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
               <div v-else class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
             </div>
             <span class="text-xs font-bold text-primary/60">Add Photo</span>
@@ -169,11 +168,7 @@ const onFileChange = (e: Event) => {
     </div>
 
     <div class="pt-6 flex justify-end">
-      <button 
-        @click="handleNext" 
-        :disabled="loading"
-        class="btn-primary"
-      >
+      <button @click="handleNext" :disabled="loading" class="btn-primary">
         {{ loading ? 'Saving...' : 'Next: Household & Allergies' }}
       </button>
     </div>

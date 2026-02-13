@@ -49,7 +49,7 @@ export class AnimalService {
     } else if (status === 'all') {
       // No status filter
     } else {
-      where.status = { in: ['AVAILABLE', 'PENDING'] };
+      where.status = 'AVAILABLE';
     }
 
     if (min_age || max_age) {

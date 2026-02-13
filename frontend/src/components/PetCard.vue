@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import Card from '@/components/ui/Card.vue'
-import Badge from '@/components/ui/Badge.vue'
+import { getImgUrl } from '@/lib/utils'
 
 interface Animal {
   id: string
@@ -21,9 +20,8 @@ const navigateToDetail = () => {
   router.push(`/animal/${props.animal.id}`)
 }
 
-const mainPhoto = props.animal.photos.find(p => p.is_main)?.photo_url
-  || props.animal.photos[0]?.photo_url
-  || 'https://placehold.co/300x200?text=No+Photo'
+const mainPhoto = getImgUrl(props.animal.photos.find(p => p.is_main)?.photo_url
+  || props.animal.photos[0]?.photo_url)
 
 const ageDisplay = props.animal.age_months < 12
   ? `${props.animal.age_months} months`
@@ -37,16 +35,10 @@ const statusVariant = {
 </script>
 
 <template>
-  <Card 
-    @click="navigateToDetail"
-    class="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
-  >
+  <Card @click="navigateToDetail" class="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
     <div class="relative aspect-[4/3] overflow-hidden">
-      <img
-        :src="mainPhoto"
-        :alt="animal.name"
-        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-      />
+      <img :src="mainPhoto" :alt="animal.name"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
       <Badge :variant="statusVariant as any" class="absolute top-2 right-2">
         {{ animal.status }}
       </Badge>

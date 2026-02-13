@@ -21,7 +21,7 @@ watch(filters, (newFilters) => {
   emit('filter-change', { ...newFilters })
 }, { deep: true })
 
-const speciesOptions = ['Cat', 'Dog', 'Rabbit', 'Bird']
+const speciesOptions = ['Dog', 'Cat']
 const genderOptions = ['Male', 'Female']
 const statusOptions = ['AVAILABLE', 'PENDING']
 </script>
@@ -58,10 +58,8 @@ const statusOptions = ['AVAILABLE', 'PENDING']
         </select>
       </div>
 
-      <button
-        @click="filters = { species: '', gender: '', status: '' }"
-        class="w-full py-2 text-sm text-primary hover:underline"
-      >
+      <button @click="filters = { species: '', gender: '', status: '' }"
+        class="w-full py-2 text-sm text-primary hover:underline">
         Clear Filters
       </button>
     </div>

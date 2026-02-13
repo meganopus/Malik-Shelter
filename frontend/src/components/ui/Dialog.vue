@@ -49,15 +49,21 @@ const handleConfirm = () => {
               {{ state.message }}
             </p>
 
-            <button @click="handleConfirm"
-              class="w-full py-5 rounded-[24px] font-black text-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl flex items-center justify-center gap-2 group"
-              :class="[
-                state.type === 'success' ? 'bg-accent text-dark shadow-accent/40' : 
-                state.type === 'error' ? 'bg-rose-600 text-white shadow-rose-600/40' : 
-                'bg-primary text-white shadow-primary/40'
-              ]">
-              {{ state.confirmText }}
-            </button>
+            <div class="flex gap-3 w-full">
+              <button v-if="state.showCancelButton" @click="close"
+                class="flex-1 py-3.5 rounded-[20px] font-bold text-base transition-all hover:bg-primary/5 active:scale-[0.98] border-2 border-primary/10 text-muted">
+                {{ state.cancelText }}
+              </button>
+              <button @click="handleConfirm"
+                class="flex-1 py-3.5 rounded-[20px] font-bold text-base transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-2 group"
+                :class="[
+                  state.type === 'success' ? 'bg-accent text-dark shadow-accent/40' :
+                    state.type === 'error' ? 'bg-rose-600 text-white shadow-rose-600/40' :
+                      'bg-primary text-white shadow-primary/40'
+                ]">
+                {{ state.confirmText }}
+              </button>
+            </div>
           </div>
 
           <!-- Decorative bottom gradient -->

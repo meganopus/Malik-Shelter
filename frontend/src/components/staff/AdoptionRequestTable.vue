@@ -34,17 +34,20 @@ const getStatusVariant = (status: string) => {
     default: return 'secondary'
   }
 }
+
+const getStatusLabel = (status: string) => {
+  switch (status) {
+    case 'REJECTED': return 'rejected'
+    case 'REJECTED_AUTO': return 'auto rejected'
+    default: return status
+  }
+}
 </script>
 
 <template>
   <div class="bg-white rounded-[32px] shadow-soft border border-primary/10 overflow-hidden">
     <div v-if="loading" class="p-12 flex flex-col items-center justify-center">
-      <DotLottieVue
-        src="/loading-cat.lottie"
-        autoplay
-        loop
-        style="width: 200px; height: 200px;"
-      />
+      <DotLottieVue src="/loading-cat.lottie" autoplay loop style="width: 200px; height: 200px;" />
       <p class="text-muted font-bold animate-pulse">Fetching requests...</p>
     </div>
 
@@ -75,25 +78,21 @@ const getStatusVariant = (status: string) => {
                   <User class="w-5 h-5" />
                 </div>
                 <div class="text-left">
-                  <button 
-                    @click="$emit('review-profile', request.adopter_id)"
-                    class="font-bold text-dark hover:text-accent transition-colors block text-left"
-                  >
+                  <button @click="$emit('review-profile', request.adopter_id)"
+                    class="font-bold text-dark hover:text-accent transition-colors block text-left">
                     {{ request.adopter.adopter_profile?.full_name || 'Incognito Adopter' }}
                   </button>
                   <p class="text-sm text-muted">{{ request.adopter.email }}</p>
-                  <button 
-                    @click="$emit('review-profile', request.adopter_id)"
-                    class="text-xs font-bold text-primary hover:text-primary/70 transition-colors mt-1 flex items-center gap-1"
-                  >
+                  <button @click="$emit('review-profile', request.adopter_id)"
+                    class="text-xs font-bold text-primary hover:text-primary/70 transition-colors mt-1 flex items-center gap-1">
                     View Bio ✨
                   </button>
                 </div>
               </div>
             </td>
             <td class="px-6 py-5">
-               <div class="font-bold text-dark">{{ request.animal.name }}</div>
-               <div class="text-sm text-muted">{{ request.animal.species }} • {{ request.animal.breed }}</div>
+              <div class="font-bold text-dark">{{ request.animal.name }}</div>
+              <div class="text-sm text-muted">{{ request.animal.species }} • {{ request.animal.breed }}</div>
             </td>
             <td class="px-6 py-5">
               <div v-for="booking in request.bookings" :key="booking.id" class="space-y-1">
@@ -105,43 +104,37 @@ const getStatusVariant = (status: string) => {
                   {{ formatTime(booking.visit_slot.start_time) }} - {{ formatTime(booking.visit_slot.end_time) }}
                 </div>
                 <div class="pt-1">
-                   <Badge :variant="booking.status === 'SCHEDULED' ? 'outline' : 'success'">
-                     {{ booking.status }}
-                   </Badge>
+                  <Badge :variant="booking.status === 'SCHEDULED' ? 'outline' : 'success'">
+                    {{ booking.status }}
+                  </Badge>
                 </div>
               </div>
             </td>
             <td class="px-6 py-5">
               <Badge :variant="getStatusVariant(request.status)">
-                {{ request.status }}
+                {{ getStatusLabel(request.status) }}
               </Badge>
             </td>
             <td class="px-6 py-5 text-right">
               <div class="flex items-center justify-end gap-2">
                 <!-- Check-in Action -->
-                <button 
-                  v-if="request.status === 'PENDING' && request.bookings[0]?.status === 'SCHEDULED'"
+                <button v-if="request.status === 'PENDING' && request.bookings[0]?.status === 'SCHEDULED'"
                   @click="$emit('check-in', request.bookings[0].id)"
                   class="p-2 rounded-xl bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors"
-                  title="Mark Visitor Check-in"
-                >
+                  title="Mark Visitor Check-in">
                   <UserCheck class="w-5 h-5" />
                 </button>
 
                 <!-- Approve/Reject -->
                 <template v-if="request.status === 'PENDING'">
-                  <button 
-                    @click="$emit('approve', request.id)"
+                  <button @click="$emit('approve', request.id)"
                     class="p-2 rounded-xl bg-emerald-50 text-emerald-500 hover:bg-emerald-100 transition-colors"
-                    title="Approve Adoption"
-                  >
+                    title="Approve Adoption">
                     <CheckCircle class="w-5 h-5" />
                   </button>
-                  <button 
-                    @click="$emit('reject', request.id)"
+                  <button @click="$emit('reject', request.id)"
                     class="p-2 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors"
-                    title="Reject Request"
-                  >
+                    title="Reject Request">
                     <XCircle class="w-5 h-5" />
                   </button>
                 </template>

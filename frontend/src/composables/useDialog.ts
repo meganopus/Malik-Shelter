@@ -6,6 +6,8 @@ interface DialogState {
   message: string
   type: 'success' | 'error' | 'info'
   confirmText: string
+  cancelText?: string
+  showCancelButton?: boolean
   lottie?: string
   onConfirm?: () => void
 }
@@ -16,6 +18,8 @@ const state = reactive<DialogState>({
   message: '',
   type: 'info',
   confirmText: 'Got it',
+  cancelText: 'Cancel',
+  showCancelButton: false,
   lottie: undefined
 })
 
@@ -25,6 +29,8 @@ export function useDialog() {
     message: string,
     type?: DialogState['type'],
     confirmText?: string,
+    cancelText?: string,
+    showCancelButton?: boolean,
     lottie?: string,
     onConfirm?: () => void
   }) => {
@@ -32,6 +38,8 @@ export function useDialog() {
     state.message = options.message
     state.type = options.type || 'info'
     state.confirmText = options.confirmText || (options.type === 'success' ? 'Beautiful! 🐾' : 'Got it')
+    state.cancelText = options.cancelText || 'Cancel'
+    state.showCancelButton = options.showCancelButton || false
     state.lottie = options.lottie
     state.onConfirm = options.onConfirm
     state.isOpen = true
