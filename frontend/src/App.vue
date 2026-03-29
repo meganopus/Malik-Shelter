@@ -51,41 +51,40 @@ const handleLogout = () => {
   <div class="min-h-screen">
     <!-- Header (hidden on login/register pages) -->
     <header v-if="$route.path !== '/login' && $route.path !== '/register'"
-      class="bg-white shadow-soft py-4 px-6 relative z-10 flex items-center justify-between">
-      <div class="flex flex-col">
-        <router-link to="/" class="hover:opacity-80 transition-opacity">
-          <h1 class="text-2xl text-accent inline-block">🐾 Malik Shelter</h1>
-        </router-link>
-        <p class="text-muted text-sm mt-[-4px]">Find your new best friend</p>
-      </div>
+      class="bg-[#f5f0ea] py-4 px-8 relative z-10 flex items-center justify-between">
+      <router-link to="/" class="hover:opacity-80 transition-opacity">
+        <span class="text-xl font-bold text-[#2d2a1e]">Malik Shelter</span>
+      </router-link>
 
       <div v-if="isAuthenticated()" class="flex items-center gap-4">
         <router-link v-if="isStaff()" to="/staff/inventory"
-          class="text-sm font-bold text-muted hover:text-accent transition-colors">
+          class="text-sm font-[family-name:var(--font-form)] text-gray-500 hover:text-gray-700 transition-colors">
           Inventory
         </router-link>
         <router-link v-if="isStaff()" to="/staff/adoption-requests"
-          class="text-sm font-bold text-muted hover:text-accent transition-colors">
+          class="text-sm font-[family-name:var(--font-form)] text-gray-500 hover:text-gray-700 transition-colors">
           Requests
         </router-link>
         <router-link v-if="isStaff()" to="/staff/visit-settings"
-          class="text-sm font-bold text-muted hover:text-accent transition-colors">
+          class="text-sm font-[family-name:var(--font-form)] text-gray-500 hover:text-gray-700 transition-colors">
           Settings
         </router-link>
-        <router-link to="/profile" class="text-sm font-bold text-muted hover:text-accent transition-colors">
+        <router-link to="/profile"
+          class="text-sm font-[family-name:var(--font-form)] text-gray-500 hover:text-gray-700 transition-colors">
           {{ userName }}
         </router-link>
-        <button @click="handleLogout" class="text-sm font-bold text-red-400 hover:text-red-500 transition-colors">
+        <button @click="handleLogout"
+          class="text-sm font-[family-name:var(--font-form)] text-red-400 hover:text-red-500 transition-colors">
           Logout
         </button>
       </div>
-      <div v-else class="flex items-center gap-4">
+      <div v-else class="flex items-center gap-3">
         <router-link to="/login"
-          class="text-sm font-bold text-muted hover:text-accent font-medium px-4 py-2 rounded-xl transition-all">
+          class="text-sm font-[family-name:var(--font-form)] text-gray-500 hover:text-gray-700 px-4 py-2 transition-all">
           Login
         </router-link>
         <router-link to="/register"
-          class="bg-primary text-white hover:bg-secondary px-6 py-2 rounded-xl font-bold transition-all shadow-md">
+          class="bg-[#2d2a1e] text-white text-sm font-[family-name:var(--font-form)] px-5 py-2 rounded-full hover:bg-[#3d3a2e] transition-all font-semibold">
           Register
         </router-link>
       </div>

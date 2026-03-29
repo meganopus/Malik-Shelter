@@ -21,46 +21,78 @@ watch(filters, (newFilters) => {
   emit('filter-change', { ...newFilters })
 }, { deep: true })
 
-const speciesOptions = ['Dog', 'Cat']
+const speciesOptions = [
+  { label: 'Dogs', value: 'Dog', icon: '🐶' },
+  { label: 'Cats', value: 'Cat', icon: '🐱' },
+]
+
 const genderOptions = ['Male', 'Female']
-const statusOptions = ['AVAILABLE', 'PENDING']
+
+function clearAll() {
+  filters.value = { species: '', gender: '', status: '' }
+}
+
+function selectSpecies(value: string) {
+  filters.value.species = filters.value.species === value ? '' : value
+}
+
+function selectGender(value: string) {
+  filters.value.gender = filters.value.gender === value ? '' : value
+}
 </script>
 
 <template>
-  <aside class="w-64 p-4 bg-card rounded-xl border shadow-sm">
-    <h2 class="font-semibold text-lg mb-4">Filters</h2>
-
-    <div class="space-y-4">
-      <!-- Species -->
-      <div>
-        <label class="block text-sm font-medium mb-2">Species</label>
-        <select v-model="filters.species" class="w-full p-2 border rounded-lg bg-background">
-          <option value="">All</option>
-          <option v-for="s in speciesOptions" :key="s" :value="s">{{ s }}</option>
-        </select>
+  <aside class="w-56 shrink-0">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <!-- Header -->
+      <div class="mb-5">
+        <h2 class="font-bold text-base text-[#3d3522]">Filters</h2>
+        <p class="text-xs text-gray-400 mt-0.5 font-[family-name:var(--font-form)]">Find your friend</p>
       </div>
+
+      <!-- Species List -->
+      <div class="space-y-1 mb-6">
+        <button
+          v-for="opt in speciesOptions"
+          :key="opt.value"
+          @click="selectSpecies(opt.value)"
+          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-[family-name:var(--font-form)] transition-all"
+          :class="filters.species === opt.value
+            ? 'bg-[#d8e5b0] text-[#3d3522] font-semibold'
+            : 'text-gray-600 hover:bg-gray-50'"
+        >
+          <span class="text-base">{{ opt.icon }}</span>
+          <span>{{ opt.label }}</span>
+        </button>
+      </div>
+
+      <!-- Divider -->
+      <div class="border-t border-gray-100 mb-5"></div>
 
       <!-- Gender -->
-      <div>
-        <label class="block text-sm font-medium mb-2">Gender</label>
-        <select v-model="filters.gender" class="w-full p-2 border rounded-lg bg-background">
-          <option value="">All</option>
-          <option v-for="g in genderOptions" :key="g" :value="g">{{ g }}</option>
-        </select>
+      <div class="mb-5">
+        <p class="text-[10px] tracking-widest uppercase font-semibold text-gray-400 mb-3 font-[family-name:var(--font-form)]">Gender</p>
+        <div class="flex gap-2">
+          <button
+            v-for="g in genderOptions"
+            :key="g"
+            @click="selectGender(g)"
+            class="flex-1 py-1.5 rounded-full text-sm font-[family-name:var(--font-form)] transition-all border"
+            :class="filters.gender === g
+              ? 'bg-[#d8e5b0] border-[#c4cea1] text-[#3d3522] font-semibold'
+              : 'border-gray-200 text-gray-500 hover:border-gray-300'"
+          >
+            {{ g }}
+          </button>
+        </div>
       </div>
 
-      <!-- Status -->
-      <div>
-        <label class="block text-sm font-medium mb-2">Status</label>
-        <select v-model="filters.status" class="w-full p-2 border rounded-lg bg-background">
-          <option value="">All</option>
-          <option v-for="st in statusOptions" :key="st" :value="st">{{ st }}</option>
-        </select>
-      </div>
-
-      <button @click="filters = { species: '', gender: '', status: '' }"
-        class="w-full py-2 text-sm text-primary hover:underline">
-        Clear Filters
+      <!-- Clear All -->
+      <button
+        @click="clearAll"
+        class="text-xs text-gray-400 hover:text-gray-600 font-[family-name:var(--font-form)] transition-colors"
+      >
+        Clear All
       </button>
     </div>
   </aside>
