@@ -61,6 +61,11 @@ const handleLogout = () => {
       </router-link>
 
       <div v-if="isAuthenticated()" class="flex items-center gap-4">
+        <router-link v-if="isStaff()" to="/staff/dashboard"
+          :class="isDark ? 'text-gray-300 hover:text-white' : 'text-gray-500 hover:text-gray-700'"
+          class="text-sm font-[family-name:var(--font-form)] transition-colors">
+          Dashboard
+        </router-link>
         <router-link v-if="isStaff()" to="/staff/inventory"
           :class="isDark ? 'text-gray-300 hover:text-white' : 'text-gray-500 hover:text-gray-700'"
           class="text-sm font-[family-name:var(--font-form)] transition-colors">

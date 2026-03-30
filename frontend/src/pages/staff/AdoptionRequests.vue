@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { Search, ArrowLeft } from 'lucide-vue-next'
 import { useAdoption } from '@/composables/useAdoption'
 import { useDialog } from '@/composables/useDialog'
@@ -105,7 +105,27 @@ const handleCheckIn = async (bookingId: string) => {
   }
 }
 
+const totalPages = computed(() => Math.ceil(total.value / filters.value.limit) || 1)
+
+const nextPage = () => {
+  if (filters.value.page < totalPages.value) filters.value.page++
+}
+
+const prevPage = () => {
+  if (filters.value.page > 1) filters.value.page--
+}
+
+watch(filters, () => {
+  // If we want to reset to page 1 on search change.
+  // Actually, deep watch handles the fetch. But if we change status, we should probably reset to page 1.
+  // Since deep watcher triggers fetchRequests anyway, doing a separate watch might cause double fetch.
+  // We'll just watch for now.
+}, { deep: true })
+watch(() => [filters.value.adopter_name, filters.value.status], () => {
+  filters.value.page = 1
+})
 watch(filters, fetchRequests, { deep: true })
+
 onMounted(fetchRequests)
 </script>
 
@@ -138,6 +158,32 @@ onMounted(fetchRequests)
 
     <AdoptionRequestTable :requests="requests" :loading="loading" @approve="handleApprove" @reject="handleReject"
       @check-in="handleCheckIn" @review-profile="handleReviewProfile" />
+
+    <!-- Pagination Controls -->
+    <div v-if="!loading && total > filters.limit" class="flex justify-between items-center bg-[var(--color-surface,white)] p-4 rounded-xl shadow-soft">
+      <p class="text-sm text-muted font-medium">
+        Showing {{ (filters.page - 1) * filters.limit + 1 }} to {{ Math.min(filters.page * filters.limit, total) }} of {{ total }} entries
+      </p>
+      <div class="flex gap-2">
+        <button 
+          @click="prevPage" 
+          :disabled="filters.page === 1"
+          class="px-3 py-1 bg-primary/10 text-accent rounded hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+        >
+          Previous
+        </button>
+        <span class="px-3 py-1 font-bold text-dark text-sm border border-primary/10 rounded flex items-center">
+          Page {{ filters.page }} of {{ totalPages }}
+        </span>
+        <button 
+          @click="nextPage" 
+          :disabled="filters.page >= totalPages"
+          class="px-3 py-1 bg-primary/10 text-accent rounded hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+        >
+          Next
+        </button>
+      </div>
+    </div>
 
     <ProfileReviewModal :show="isReviewModalOpen" :profile="selectedProfile" @close="isReviewModalOpen = false" />
 

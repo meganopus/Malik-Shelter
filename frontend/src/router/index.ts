@@ -27,6 +27,12 @@ const routes = [
     component: Register
   },
   {
+    path: '/staff/dashboard',
+    name: 'staff-dashboard',
+    component: () => import('@/pages/staff/Dashboard.vue'),
+    meta: { requiresAuth: true, role: 'STAFF' }
+  },
+  {
     path: '/staff/inventory',
     name: 'staff-inventory',
     component: () => import('@/pages/staff/Inventory.vue'),
