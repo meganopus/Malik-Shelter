@@ -1,24 +1,26 @@
-FROM oven/bun:1-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
+
+RUN apk add --no-cache python3 make g++
 
 COPY package.json package-lock.json ./
 COPY prisma ./prisma
 COPY prisma.config.ts ./
-RUN bun install
+RUN npm ci
 
 COPY frontend/package*.json ./frontend/
-RUN bun install --cwd frontend
+RUN npm ci --prefix frontend
 
 COPY . .
 
 ARG VITE_API_BASE_URL=/api
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
-RUN bunx tsc -p tsconfig.json
-RUN bun run --cwd frontend build
+RUN npm run build
+RUN npm run build --prefix frontend
 
-FROM oven/bun:1-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
@@ -73,4 +75,4 @@ VOLUME ["/app/public/uploads", "/app/data"]
 
 EXPOSE 80
 
-CMD ["sh", "-c", "bunx prisma migrate deploy && nginx && exec bun dist/src/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && nginx && exec node dist/src/index.js"]
