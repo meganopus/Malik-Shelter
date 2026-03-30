@@ -1,14 +1,32 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { Clock, CheckCircle, XCircle, Search, User, UserCheck } from 'lucide-vue-next'
 import Badge from '@/components/ui/Badge.vue'
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 
-defineProps<{
+const props = defineProps<{
   requests: any[]
   loading: boolean
 }>()
 
 const emit = defineEmits(['approve', 'reject', 'check-in', 'review-profile'])
+
+// Delay showing the loading animation by 2 seconds
+const delayedLoading = ref(false)
+let loadingTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(
+  () => props.loading,
+  (val) => {
+    if (val) {
+      loadingTimer = setTimeout(() => { delayedLoading.value = true }, 2000)
+    } else {
+      if (loadingTimer) clearTimeout(loadingTimer)
+      delayedLoading.value = false
+    }
+  },
+  { immediate: true }
+)
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -46,7 +64,7 @@ const getStatusLabel = (status: string) => {
 
 <template>
   <div class="bg-[var(--color-surface,white)] rounded-[32px] shadow-soft border border-primary/10 overflow-hidden">
-    <div v-if="loading" class="p-12 flex flex-col items-center justify-center">
+    <div v-if="delayedLoading" class="p-12 flex flex-col items-center justify-center">
       <DotLottieVue src="/loading-cat.lottie" autoplay loop style="width: 200px; height: 200px;" />
       <p class="text-muted font-bold animate-pulse">Fetching requests...</p>
     </div>
