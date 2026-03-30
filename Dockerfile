@@ -71,8 +71,6 @@ server {
 }
 EOF
 
-VOLUME ["/app/public/uploads", "/app/data"]
-
 EXPOSE 80
 
 CMD ["sh", "-c", "npx prisma migrate deploy && nginx && exec node dist/src/index.js"]
