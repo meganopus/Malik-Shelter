@@ -35,8 +35,10 @@ COPY --from=builder /app/prisma.config.ts ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/frontend/dist ./frontend/dist
 
-RUN mkdir -p /app/public/uploads /app/dist/public \
+RUN mkdir -p /app/public/uploads /app/dist/public /app/data \
+  && touch /app/data/dev.db \
   && ln -sf /app/public/uploads /app/dist/public/uploads \
+  && ln -sf /app/data/dev.db /app/dev.db \
   && ln -sf /app/dev.db /app/dist/dev.db
 
 RUN cat > /etc/nginx/http.d/default.conf <<'EOF'
@@ -66,6 +68,8 @@ server {
   }
 }
 EOF
+
+VOLUME ["/app/public/uploads", "/app/data"]
 
 EXPOSE 80
 
